@@ -8,6 +8,8 @@ import { Container } from './App.styled';
 import { Heading } from './App.styled';
 import { Title } from './App.styled';
 
+const STORAGE_KEY = 'contacts';
+
 export class App extends Component {
   state = {
     contacts: [
@@ -18,6 +20,21 @@ export class App extends Component {
     ],
     filter: '',
   };
+
+  componentDidMount() {
+    const savedContacts = localStorage.getItem(STORAGE_KEY);
+    const normalizedContacts = JSON.parse(savedContacts);
+
+    if (normalizedContacts) {
+      this.setState({ contacts: normalizedContacts });
+    }
+  }
+
+  componentDidUpdate(_, prevState) {
+    if (this.state.contacts !== prevState.contacts) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.state.contacts));
+    }
+  }
 
   onSubmitHandler = ({ name, number }) => {
     const contact = {
